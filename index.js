@@ -59,7 +59,7 @@ app.post('/deploy_script', async (req, res) => {
     
     const { stdout, stderr } = await execPromise(executionCommand);
     
-    console.log('[INFO] Script executed successfully.');
+    console.log('[INFO] Le script s\'est exécuté avec succès.');
     
     // 5. Clean up the temporary file
     fs.unlinkSync(tempScriptPath);
@@ -67,7 +67,7 @@ app.post('/deploy_script', async (req, res) => {
     // 6. Return the script's output in the response
     res.status(200).json({
       status: 'success',
-      message: 'Script executed successfully.',
+      message: 'Le script s\'est exécuté avec succès.',
       stdout,
       stderr
     });

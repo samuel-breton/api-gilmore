@@ -1,7 +1,7 @@
 {
   "name": "api-gilmore",
   "version": "1.0.0",
-  "description": "",
+  "description": "```node npm init -y ```",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,5 +13,13 @@
   "dependencies": {
     "express": "^5.1.0",
     "uuid": "^11.1.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samuel-breton/api-gilmore.git"
+  },
+  "bugs": {
+    "url": "https://github.com/samuel-breton/api-gilmore/issues"
+  },
+  "homepage": "https://github.com/samuel-breton/api-gilmore#readme"
 }
