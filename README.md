@@ -5,7 +5,6 @@ In this context, the API is the listener. It waits for an external "event"—in 
 
 Building this API means writing a small, focused web server that exposes a single, secure endpoint to handle this specific action.
 
-
 Step 1: Choosing Your Stack (Node.js & Express)
 For a task like this, where the logic is simple and I/O-bound (fetching a file), Node.js with the Express.js framework is an excellent choice. It's fast, widely used, and has a straightforward module for executing shell commands.
 
@@ -65,7 +64,7 @@ curl -sS -X POST http://localhost:3000/deploy_script \
 
 Pour mieux lire et interpréter la réponse JSON dans votre terminal, vous pouvez utiliser l’outil **[jq](https://jqlang.or)**, qui permet de formater et colorer le JSON pour une lecture plus facile.
 
-Ajoutez simplement | jq à la fin de votre commande :
+Ajoutez simplement `| jq` à la fin de votre commande :
 
 ```zsh
 curl -sS -X POST http://localhost:3000/deploy_script \
