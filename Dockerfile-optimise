@@ -1,0 +1,55 @@
+# Utilise la dernière version LTS de Node.js avec Alpine Linux
+# Alpine est ~5MB vs ~1GB pour les images standard, idéal pour la production
+FROM node:22-alpine
+
+# Métadonnées pour traçabilité et documentation
+LABEL maintainer="samuel-breton"
+LABEL version="1.0"
+LABEL description="Application Node.js optimisée pour la production"
+
+# Installe les dépendances système nécessaires pour les modules natifs
+# gcompat remplace libc6-compat pour Alpine 3.19+
+RUN apk add --no-cache \
+    gcompat \
+    dumb-init
+
+# Crée un utilisateur non-root pour la sécurité
+# Évite d'exécuter l'app en tant que root
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
+
+# Définit le répertoire de travail
+WORKDIR /app
+
+# Copie uniquement les fichiers de dépendances d'abord
+# Optimise le cache Docker - cette couche ne change que si package.json change
+COPY package*.json ./
+
+# Installe les dépendances de production uniquement
+# --omit=dev exclut devDependencies, --frozen-lockfile assure la reproductibilité
+RUN npm ci --omit=dev --frozen-lockfile && \
+    npm cache clean --force
+
+# Copie le code source après l'installation des dépendances
+# Maximise l'efficacité du cache Docker
+COPY --chown=nextjs:nodejs . .
+
+# Change vers l'utilisateur non-root
+USER nextjs
+
+# Expose le port de l'application
+# Utilise une variable d'environnement pour la flexibilité
+EXPOSE ${PORT:-3000}
+
+# Utilise dumb-init pour gérer proprement les signaux système
+# Améliore la gestion des processus dans le conteneur
+ENTRYPOINT ["dumb-init", "--"]
+
+# Commande par défaut avec gestion d'erreur robuste
+# NODE_ENV=production optimise les performances
+CMD ["node", "--enable-source-maps", "index.js"]
+
+# Health check pour surveiller l'état de l'application
+# Ajuste l'URL selon ton endpoint de santé
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD node healthcheck.js || exit 1

@@ -1,0 +1,52 @@
+# Dépendances et caches
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Fichiers de développement
+.git/
+.gitignore
+README.md
+.env
+.env.local
+.env.*.local
+
+# IDE et éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs et données temporaires
+logs/
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Tests et coverage
+coverage/
+.nyc_output/
+.jest/
+
+# Build artifacts locaux
+dist/
+build/
+.next/
+
+# OS generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker
+Dockerfile*
+.dockerignore
+docker-compose*.yml
