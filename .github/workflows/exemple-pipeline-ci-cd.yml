@@ -1,0 +1,62 @@
+# Nom du workflow (il apparaîtra dans l'interface de GitHub Actions)
+name: CI/CD Pipeline
+
+# Déclencheur du pipeline : s'exécute à chaque 'push' sur la branche 'main'
+on:
+  push:
+    branches: [ "main" ]
+
+# Définition des variables globales du pipeline
+env:
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+  IMAGE_NAME: 'api-gilmore' # Le nom de l'image Docker
+
+# Les "jobs" sont les étapes de votre pipeline
+jobs:
+  # Le job de construction et de publication de l'image Docker
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      # Étape 1: Cloner le code de votre dépôt
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Étape 2: Connexion à Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ env.DOCKER_HUB_TOKEN }}
+
+      # Étape 3: Construire l'image Docker avec des tags multiples
+      - name: Build and tag Docker image
+        id: build
+        uses: docker/build-push-action@v4
+        with:
+          context: . # Utilise le Dockerfile dans le répertoire courant
+          push: false # Ne pas pousser l'image tout de suite
+          tags: |
+            ${{ env.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      # Étape 4: Pousser l'image vers Docker Hub
+      - name: Push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  # Le job de déploiement (vous devrez le personnaliser)
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push # S'exécute uniquement si le job de build a réussi
+    steps:
+      # Étape 1: Un exemple de déploiement. Vous devrez remplacer ceci par votre propre logique.
+      - name: Deployment Step (placeholder)
+        run: |
+          echo "Déploiement de l'image ${{ env.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }} vers votre environnement."
+          echo "Par exemple, mise à jour d'un pod Kubernetes ou d'un service App sur Azure."
